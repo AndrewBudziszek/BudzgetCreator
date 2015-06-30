@@ -2,7 +2,6 @@
  * Created by Andrew on 4/19/15.
  * Have Questions? Contact me at andrew+support@sonnybrooksstudios.com
  */
-import com.sun.deploy.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -15,19 +14,40 @@ public class Driver {
         try
         {
             Double dSalary = -1.0;
+            boolean isHourlyWage;
             Map<String, Double> monthlyExpense = new HashMap<String, Double>();
             //Initial setup
 
             //Get Yearly Salary
             while(dSalary == -1.0) {
-                SonnyUtilities.println("\nPlease enter your yearly salary (XXXXX.XX): $");
+                isHourlyWage = false;
+                SonnyUtilities.println("\nPlease enter your yearly salary (XXXXX.XX) or type 'h' for hourly: $");
                 String salaryResponse = stdIn.nextLine().replace(",", "").replace("$", "");
+                if(salaryResponse.contains("h"))
+                {
+                    SonnyUtilities.println("Please enter your hourly salary: $");
+                    salaryResponse = stdIn.nextLine().replace(",", "").replace("$", "");
+                    isHourlyWage = true;
+                }
                 if(!salaryResponse.matches("^[0-9]+$"))
                 {
                     SonnyUtilities.println("Invalid salary response. Please use format - 55,000");
                     continue;
                 }
                 dSalary = Double.parseDouble(salaryResponse);
+                if(isHourlyWage)
+                {
+                    /*
+                        On an hourly wage, you can estimate the yearly salary
+                        by taking the hourly wage, multiplying it by 2, then
+                        multiplying it by 1000. For example: Working full time
+                        at $15/hr will come out to $15*2 = $30 * 1000 = $30,000/year.
+                        This calculation only works for full time workers.
+                     */
+                    dSalary = dSalary * 2 * 1000;
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    SonnyUtilities.println("Your yearly salary is approx. $" + df.format(dSalary));
+                }
             }
 
             //Get Number of people in household.
